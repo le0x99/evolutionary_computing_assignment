@@ -19,24 +19,23 @@ def softmax_activation(x):
     return expo/expo_sum
 
 # Random set of weights (the genes)  
-genes = np.random.randn(105)
-# 20 Input Nodes
-inputs = np.random.randn(20)
+genes = {
+         "bias" : np.random.randn(1, 5),
+         "weights" : np.random.randn(20, 5),
+        }
 
 class player_0(Controller):
-    def __init__(self): return
+    def __init__(self, normalize):
+        self.normalize = normalize
+        return
     def control(self, inputs, genes):
         ## NN 0 : 20 input -> 5 output (+5x1 bias per output)
         ## Params : 20x5 weights + 5x1 bias = 105
-        
-        # MinMax Normalization
-        inputs = (inputs-min(inputs))/float((max(inputs)-min(inputs)))
-        # 5x1 Biases, one for each output Node
-        bias = genes[:5].reshape(1, 5)
-        # 5x20 weights, given 20 inputs and 5 outputs
-        weights = genes[5:].reshape((len(inputs), 5))
-        # Output de-linearized by activation
-        output = sigmoid_activation(inputs.dot(weights) + bias)[0]
+        if self.normalize:
+            # MinMax Normalization
+            inputs = (inputs-min(inputs))/float((max(inputs)-min(inputs)))
+
+        output = sigmoid_activation(inputs.dot(genes["weights"]) + genes["bias"])[0]
         
         # Decisions based on NN output
         if output[0] > 0.5:
@@ -67,20 +66,20 @@ class player_0(Controller):
         return [left, right, jump, shoot, release]
 
 
-genes = {"bias_hidden" : np.random.randn(1, 10),
-         "bias_output" : np.random.randn(1, 5),
-         "weights_1" : np.random.randn(20, 10),
-         "weights_2" : np.random.randn(10, 5)}
+
 
 
 class player_1(Controller):
-    def __init__(self): return
+    def __init__(self, normalize):
+        self.normalize = normalize
+        return
     def control(self, inputs, genes:dict):
         ## NN 1 : 20 input -> 10 hidden -> 5 output 
         ## Params : 20x10x5 weights + 5x1 output bias + 10x1 hidden bias = 1015
 
         # MinMax Normalization
-        inputs = (inputs-min(inputs))/float((max(inputs)-min(inputs)))
+        if self.normalize:
+            inputs = (inputs-min(inputs))/float((max(inputs)-min(inputs)))
         output1 = sigmoid_activation(inputs.dot(genes["weights_1"]) + genes["bias_hidden"])
         output = sigmoid_activation(output1.dot(genes["weights_2"])+ genes["bias_output"])[0]
         

@@ -41,16 +41,3 @@ output = sigmoid_activation(inputs.dot(weights) + bias)[0]
 inputs = np.random.randn(20)
 # MinMax Normalization
 inputs = (inputs-min(inputs))/float((max(inputs)-min(inputs)))
-# Geneset
-genes = {"bias_hidden" : np.random.randn(1, 10),
-         "bias_output" : np.random.randn(1, 5),
-         "weights_1" : np.random.randn(20, 10),
-         "weights_2" : np.random.randn(10, 5)}
-
-output1 = sigmoid_activation(inputs.dot(genes["weights_1"]) + genes["bias_hidden"])
-
-output = sigmoid_activation(output1.dot(genes["weights_2"])+ genes["bias_output"])[0]
-
-
-
-
